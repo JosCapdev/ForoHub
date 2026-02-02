@@ -17,7 +17,8 @@ public class Topico {
     private String titulo;
     private String mensaje;
     private LocalDateTime fechaCreacion;
-
+    @Enumerated(EnumType.STRING)
+    private StatusTopico status;
     @ManyToOne
     private Usuario autor;
 
