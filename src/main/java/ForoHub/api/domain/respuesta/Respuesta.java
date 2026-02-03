@@ -1,12 +1,20 @@
 package ForoHub.api.domain.respuesta;
 
-import ForoHub.api.domain.topico.Topico;
-import ForoHub.api.domain.usuario.Usuario;
+import ForoHub.api.domain.topico.model.Topico;
+import ForoHub.api.domain.usuario.model.Usuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Respuesta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
