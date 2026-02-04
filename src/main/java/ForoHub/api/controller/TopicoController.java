@@ -5,12 +5,10 @@ import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
 import ForoHub.api.domain.topico.service.TopicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -31,6 +29,9 @@ public class TopicoController {
 
         return ResponseEntity.created(uri).body(detalleTopico);
     }
+
+    @GetMapping
+    public ResponseEntity<Page<DatosDetalleTopico>>
 
 
 }

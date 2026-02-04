@@ -12,6 +12,8 @@ import ForoHub.api.infra.errores.ValidacionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TopicoServiceImpl implements TopicoService {
     @Autowired
@@ -38,6 +40,7 @@ public class TopicoServiceImpl implements TopicoService {
         topico.setAutor(autor);
         topico.setCurso(curso);
         topico.setStatus(StatusTopico.ABIERTO);
+        topico.setFechaCreacion(LocalDateTime.now());
         repository.save(topico);
         return new DatosDetalleTopico(topico);
     }
