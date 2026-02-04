@@ -40,7 +40,8 @@ public class Topico {
     public Topico(@Valid DatosRegistroTopico datos) {
         this.titulo = datos.titulo();
         this.mensaje = datos.mensaje();
-        this.fechaCreacion = datos.fechaCreacion() != null ? datos.fechaCreacion() : LocalDateTime.now();
+        this.fechaCreacion = LocalDateTime.now();
+        this.status = StatusTopico.ABIERTO;
     }
 
 }

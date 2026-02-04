@@ -1,10 +1,18 @@
 package ForoHub.api.domain.topico.service;
 
+import ForoHub.api.domain.topico.dto.DatosListaTopico;
 import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
 import ForoHub.api.domain.topico.dto.DatosDetalleTopico;
+import ForoHub.api.domain.topico.model.Topico;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 public interface TopicoService {
 
     DatosDetalleTopico registrar(DatosRegistroTopico datos);
 
+    Page<DatosListaTopico> listarTopicos(Pageable pageable);
+
+    Page<DatosListaTopico> buscarPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion);
 }

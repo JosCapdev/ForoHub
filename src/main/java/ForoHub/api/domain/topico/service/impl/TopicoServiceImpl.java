@@ -1,7 +1,7 @@
 package ForoHub.api.domain.topico.service.impl;
 
 import ForoHub.api.domain.curso.repository.CursoRepository;
-import ForoHub.api.domain.topico.StatusTopico;
+import ForoHub.api.domain.topico.dto.DatosListaTopico;
 import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
 import ForoHub.api.domain.topico.dto.DatosDetalleTopico;
 import ForoHub.api.domain.topico.model.Topico;
@@ -10,9 +10,10 @@ import ForoHub.api.domain.topico.service.TopicoService;
 import ForoHub.api.domain.usuario.repository.UsuarioRepository;
 import ForoHub.api.infra.errores.ValidacionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 public class TopicoServiceImpl implements TopicoService {
@@ -39,10 +40,20 @@ public class TopicoServiceImpl implements TopicoService {
         Topico topico = new Topico(datos);
         topico.setAutor(autor);
         topico.setCurso(curso);
-        topico.setStatus(StatusTopico.ABIERTO);
-        topico.setFechaCreacion(LocalDateTime.now());
         repository.save(topico);
         return new DatosDetalleTopico(topico);
+    }
+
+    @Override
+    public Page<DatosListaTopico> listarTopicos(Pageable paginacion) {
+        return repository.findAll(paginacion).map(DatosListaTopico::new);
+    }
+
+    @Override
+    public Page<DatosListaTopico> buscarPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion) {
+        return repository.findByCursoNombreAndFechaCreacionYear(
+                nombreCurso, anio, paginacion)
+                .map(DatosListaTopico::new);
     }
 
 
