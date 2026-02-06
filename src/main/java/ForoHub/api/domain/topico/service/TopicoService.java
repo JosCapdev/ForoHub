@@ -1,5 +1,6 @@
 package ForoHub.api.domain.topico.service;
 
+import ForoHub.api.domain.topico.dto.DatosActualizarTopico;
 import ForoHub.api.domain.topico.dto.DatosListaTopico;
 import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
 import ForoHub.api.domain.topico.dto.DatosDetalleTopico;
@@ -15,4 +16,10 @@ public interface TopicoService {
     Page<DatosListaTopico> listarTopicos(Pageable pageable);
 
     Page<DatosListaTopico> buscarPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion);
+
+    Topico actualizarTopico(Long id, DatosActualizarTopico datos);
+
+    void eliminarTopico(Long id);
+
+    DatosDetalleTopico DetallarTopico(Long id);
 }

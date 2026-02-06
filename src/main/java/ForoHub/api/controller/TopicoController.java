@@ -1,5 +1,6 @@
 package ForoHub.api.controller;
 
+import ForoHub.api.domain.topico.dto.DatosActualizarTopico;
 import ForoHub.api.domain.topico.dto.DatosDetalleTopico;
 import ForoHub.api.domain.topico.dto.DatosListaTopico;
 import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,7 +24,6 @@ public class TopicoController {
     TopicoService topicoService;
 
     @PostMapping
-    @Transactional
     public ResponseEntity<DatosDetalleTopico> registrarTopico(@RequestBody @Valid DatosRegistroTopico datos, UriComponentsBuilder uriComponentsBuilder) {
         var detalleTopico = topicoService.registrar(datos);
         URI uri = uriComponentsBuilder.path("/topicos/{id}")
@@ -51,6 +50,25 @@ public class TopicoController {
         return ResponseEntity.ok(page);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<DatosDetalleTopico> actualizarTopico(@PathVariable Long id , @RequestBody DatosActualizarTopico datos){
+        var topicoActualizado = topicoService.actualizarTopico(id,datos);
 
+        return  ResponseEntity.ok(new DatosDetalleTopico(topicoActualizado));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity eliminarTopico(@PathVariable Long id){
+        topicoService.eliminarTopico(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DatosDetalleTopico>detallarTopico(@PathVariable Long id){
+        var detalleTopico = topicoService.DetallarTopico(id);
+
+        return ResponseEntity.ok(detalleTopico);
+    }
 
 }
