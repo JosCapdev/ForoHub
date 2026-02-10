@@ -1,6 +1,7 @@
 package ForoHub.api.domain.usuario.model;
 
-import ForoHub.api.domain.perfil.Perfil;
+import ForoHub.api.domain.perfil.model.Perfil;
+import ForoHub.api.domain.usuario.dto.DatosRegistroUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -27,4 +28,10 @@ public class Usuario {
     @JoinTable( name = "usuario_perfiles", joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "perfil_id") )
     private Set<Perfil> perfiles = new HashSet<>();
+
+    public Usuario(DatosRegistroUsuario datos) {
+        this.nombre = datos.nombre();
+        this.email = datos.email();
+        this.pass = datos.pass();
+    }
 }

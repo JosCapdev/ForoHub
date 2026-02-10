@@ -64,7 +64,7 @@ public class TopicoController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<DatosDetalleTopico>detallarTopico(@PathVariable Long id){
         var detalleTopico = topicoService.DetallarTopico(id);
 

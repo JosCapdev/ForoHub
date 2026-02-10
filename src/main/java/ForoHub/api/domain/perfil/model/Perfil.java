@@ -1,4 +1,4 @@
-package ForoHub.api.domain.curso;
+package ForoHub.api.domain.perfil.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,11 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Curso {
+public class Perfil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String nombre;
-    @Enumerated(EnumType.STRING)
-    private Categoria categoria;
 }

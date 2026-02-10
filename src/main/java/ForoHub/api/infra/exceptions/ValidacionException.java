@@ -1,4 +1,4 @@
-package ForoHub.api.infra.errores;
+package ForoHub.api.infra.exceptions;
 
 public class ValidacionException extends RuntimeException {
 

@@ -1,6 +1,6 @@
 package ForoHub.api.domain.topico.service.impl;
 
-import ForoHub.api.domain.curso.Curso;
+import ForoHub.api.domain.curso.model.Curso;
 import ForoHub.api.domain.curso.repository.CursoRepository;
 import ForoHub.api.domain.topico.dto.DatosActualizarTopico;
 import ForoHub.api.domain.topico.dto.DatosListaTopico;
@@ -10,7 +10,7 @@ import ForoHub.api.domain.topico.model.Topico;
 import ForoHub.api.domain.topico.repository.TopicoRepository;
 import ForoHub.api.domain.topico.service.TopicoService;
 import ForoHub.api.domain.usuario.repository.UsuarioRepository;
-import ForoHub.api.infra.errores.ValidacionException;
+import ForoHub.api.infra.exceptions.ValidacionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
