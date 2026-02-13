@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/login")
 public class AuthenticationController {
+
     @Autowired
     private TokenService tokenService;
     @Autowired
@@ -31,3 +32,4 @@ public class AuthenticationController {
         return ResponseEntity.ok(new DatosTokenJWT(tokenJWT));
     }
 }
+

@@ -1,23 +1,18 @@
 package ForoHub.api.domain.usuario.model;
 
 import ForoHub.api.domain.perfil.model.Perfil;
-import ForoHub.api.domain.usuario.dto.DatosRegistroUsuario;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.jspecify.annotations.Nullable;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name="usuarios")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,24 +25,28 @@ public class Usuario implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
     private String pass;
+    private boolean activo;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "usuario_perfiles", joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "perfil_id") )
     private Set<Perfil> perfiles = new HashSet<>();
 
-    public Usuario(DatosRegistroUsuario datos) {
-        this.nombre = datos.nombre();
-        this.email = datos.email();
-        this.pass = datos.pass();
+    public Usuario(String nombre, String email, String passHasheada,boolean activo) {
+        this.nombre = nombre;
+        this.email = email;
+        this.pass = passHasheada;
+        this.activo = activo;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return this.perfiles.stream()
+                .map(perfil -> new SimpleGrantedAuthority("ROLE_" + perfil.getNombre().toUpperCase()))
+                .toList();
     }
 
     @Override
-    public @Nullable String getPassword() {
+    public String getPassword() {
         return pass;
     }
 
@@ -73,6 +72,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return activo;
     }
 }
