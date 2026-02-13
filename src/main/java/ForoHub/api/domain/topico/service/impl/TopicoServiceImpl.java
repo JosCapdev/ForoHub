@@ -23,11 +23,11 @@ import java.util.Optional;
 @Service
 public class TopicoServiceImpl implements TopicoService {
     @Autowired
-    TopicoRepository repository;
+    private TopicoRepository repository;
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
     @Autowired
-    CursoRepository cursoRepository;
+    private CursoRepository cursoRepository;
 
     @Transactional
     @Override

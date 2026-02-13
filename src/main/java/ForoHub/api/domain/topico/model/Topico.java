@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "topicos")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,10 +29,11 @@ public class Topico {
     private LocalDateTime fechaCreacion;
     @Enumerated(EnumType.STRING)
     private StatusTopico status;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
     private Usuario autor;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id")
     private Curso curso;
 
     @OneToMany(mappedBy = "topico", cascade = CascadeType.ALL)
