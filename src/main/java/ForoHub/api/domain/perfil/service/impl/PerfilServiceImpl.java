@@ -1,25 +1,69 @@
 package ForoHub.api.domain.perfil.service.impl;
 
+import ForoHub.api.domain.perfil.dto.DatosActualizarPerfil;
+import ForoHub.api.domain.perfil.dto.DatosDetallePerfil;
+import ForoHub.api.domain.perfil.dto.DatosRegistroPerfil;
 import ForoHub.api.domain.perfil.model.Perfil;
 import ForoHub.api.domain.perfil.repository.PerfilRepository;
+import ForoHub.api.domain.perfil.dto.DatosListaPerfil;
 import ForoHub.api.domain.perfil.service.PerfilService;
+import ForoHub.api.infra.exceptions.ValidacionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PerfilServiceImpl implements PerfilService {
     @Autowired
-    private PerfilRepository repository;
+    private PerfilRepository perfilRepository;
 
+    @Transactional
     @Override
-    public Optional<Perfil> buscarPorNombre(String nombre) {
-        return repository.findByNombre(nombre);
+    public DatosDetallePerfil registrarPerfil(DatosRegistroPerfil datos) {
+        Perfil perfil = new Perfil(datos);
+        perfilRepository.save(perfil);
+        return new DatosDetallePerfil(perfil);
     }
 
     @Override
-    public List<Perfil> listar() {
-        return repository.findAll(); }
+    public Page<DatosListaPerfil> listarPerfiles(Pageable paginacion) {
+        return perfilRepository.findAll(paginacion)
+                .map(DatosListaPerfil::new);
+    }
+
+    @Transactional
+    @Override
+    public Perfil actualizarPerfil(Long id, DatosActualizarPerfil datos) {
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new ValidacionException("Perfil no encontrado"));
+        if (datos.nombre().isBlank()){
+            throw new ValidacionException("El nombre no puede estar vacio");
+        }
+        perfil.setNombre(datos.nombre());
+        perfilRepository.save(perfil);
+
+        return perfil;
+    }
+
+    @Transactional
+    @Override
+    public void eliminarPerfil(Long id) {
+        if (perfilRepository.existsById(id)){
+            perfilRepository.deleteById(id);
+        }else{
+            throw new ValidacionException("Perfil no encontrado");
+        }
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new ValidacionException("Perfil no encontrado"));
+        perfilRepository.deleteById(id);
+    }
+
+    @Override
+    public DatosDetallePerfil detallarPerfil(Long id) {
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new ValidacionException("Perfil no encontrado"));
+        return new DatosDetallePerfil(perfil);
+    }
 }
