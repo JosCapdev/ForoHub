@@ -11,11 +11,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface TopicoService {
 
-    DatosDetalleTopico registrar(DatosRegistroTopico datos);
+    DatosDetalleTopico registrarTopico(DatosRegistroTopico datos);
 
     Page<DatosListaTopico> listarTopicos(Pageable pageable);
 
-    Page<DatosListaTopico> buscarPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion);
+    Page<DatosListaTopico> buscarTopicoPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion);
 
     Topico actualizarTopico(Long id, DatosActualizarTopico datos);
 

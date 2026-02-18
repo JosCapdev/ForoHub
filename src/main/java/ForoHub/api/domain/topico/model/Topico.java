@@ -1,7 +1,7 @@
 package ForoHub.api.domain.topico.model;
 
 import ForoHub.api.domain.curso.model.Curso;
-import ForoHub.api.domain.respuesta.Respuesta;
+import ForoHub.api.domain.respuesta.model.Respuesta;
 import ForoHub.api.domain.topico.StatusTopico;
 import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
 import ForoHub.api.domain.usuario.model.Usuario;

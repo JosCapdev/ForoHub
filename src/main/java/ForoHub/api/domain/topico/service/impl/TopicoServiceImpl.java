@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 public class TopicoServiceImpl implements TopicoService {
     @Autowired
-    private TopicoRepository repository;
+    private TopicoRepository topicoRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
@@ -31,7 +31,7 @@ public class TopicoServiceImpl implements TopicoService {
 
     @Transactional
     @Override
-    public DatosDetalleTopico registrar(DatosRegistroTopico datos) {
+    public DatosDetalleTopico registrarTopico(DatosRegistroTopico datos) {
         if (!usuarioRepository.existsById(datos.idUsuario())){
             throw new ValidacionException("No existe un usuario con el id: "+datos.idUsuario());
         }
@@ -39,7 +39,7 @@ public class TopicoServiceImpl implements TopicoService {
             throw new ValidacionException("No existe un curso con el id: "+datos.idCurso());
         }
 
-        if (repository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
+        if (topicoRepository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
             throw new ValidacionException("Ya existe un tópico con el mismo título y mensaje");
         }
 
@@ -48,18 +48,18 @@ public class TopicoServiceImpl implements TopicoService {
         var topico = new Topico(datos);
         topico.setAutor(autor);
         topico.setCurso(curso);
-        repository.save(topico);
+        topicoRepository.save(topico);
         return new DatosDetalleTopico(topico);
     }
 
     @Override
     public Page<DatosListaTopico> listarTopicos(Pageable paginacion) {
-        return repository.findAll(paginacion).map(DatosListaTopico::new);
+        return topicoRepository.findAll(paginacion).map(DatosListaTopico::new);
     }
 
     @Override
-    public Page<DatosListaTopico> buscarPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion) {
-        return repository.findByCursoNombreAndFechaCreacionYear(
+    public Page<DatosListaTopico> buscarTopicoPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion) {
+        return topicoRepository.findByCursoNombreAndFechaCreacionYear(
                 nombreCurso, anio, paginacion)
                 .map(DatosListaTopico::new);
     }
@@ -67,8 +67,8 @@ public class TopicoServiceImpl implements TopicoService {
     @Transactional
     @Override
     public Topico actualizarTopico(Long id, DatosActualizarTopico datos) {
-        // Verificando con el método sugerido isPresent() de la clase Java llamada Optional
-        Optional<Topico> optionalTopico = repository.findById(id);
+        // Verificando con el método sugerido en el trello, isPresent() de la clase Java llamada Optional
+        Optional<Topico> optionalTopico = topicoRepository.findById(id);
         if (!optionalTopico.isPresent()) {
             throw new ValidacionException("Tópico no encontrado");
         }
@@ -89,7 +89,7 @@ public class TopicoServiceImpl implements TopicoService {
         }
 
         if (datos.idCurso() != null) {
-            // En este caso utilizo orElseThrow() para obtener el curso
+            // En este caso decidi utilizar orElseThrow() para obtener el curso
             Curso curso = cursoRepository.findById(datos.idCurso())
                     .orElseThrow(() -> new ValidacionException("Curso no encontrado"));
             topico.setCurso(curso);
@@ -102,16 +102,16 @@ public class TopicoServiceImpl implements TopicoService {
     @Transactional
     @Override
     public void eliminarTopico(Long id) {
-        Optional<Topico> topico = repository.findById(id);
-        if (!topico.isPresent()){
-            throw new ValidacionException("Topico no encontrado con id: "+id);
+        if (topicoRepository.existsById(id)){
+            topicoRepository.deleteById(id);
+        }else {
+            throw new ValidacionException("Tópico no encontrado");
         }
-        repository.deleteById(id);
     }
 
     @Override
     public DatosDetalleTopico DetallarTopico(Long id) {
-        Optional<Topico> topico = repository.findById(id);
+        Optional<Topico> topico = topicoRepository.findById(id);
         if (!topico.isPresent()){
             throw new ValidacionException("Topico no encontrado con id: "+id);
         }
