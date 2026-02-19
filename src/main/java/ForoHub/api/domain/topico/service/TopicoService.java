@@ -21,5 +21,5 @@ public interface TopicoService {
 
     void eliminarTopico(Long id);
 
-    DatosDetalleTopico DetallarTopico(Long id);
+    DatosDetalleTopico detallarTopico(Long id);
 }

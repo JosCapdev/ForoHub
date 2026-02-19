@@ -32,19 +32,16 @@ public class TopicoServiceImpl implements TopicoService {
     @Transactional
     @Override
     public DatosDetalleTopico registrarTopico(DatosRegistroTopico datos) {
-        if (!usuarioRepository.existsById(datos.idUsuario())){
-            throw new ValidacionException("No existe un usuario con el id: "+datos.idUsuario());
-        }
-        if (!cursoRepository.existsById(datos.idCurso())){
-            throw new ValidacionException("No existe un curso con el id: "+datos.idCurso());
-        }
+        var autor = usuarioRepository.findById(datos.idUsuario())
+                .orElseThrow(() -> new ValidacionException("No existe un usuario con el id: " + datos.idUsuario()));
+
+        var curso = cursoRepository.findById(datos.idCurso())
+                .orElseThrow(() -> new ValidacionException("No existe un curso con el id: " + datos.idCurso()));
 
         if (topicoRepository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
             throw new ValidacionException("Ya existe un tópico con el mismo título y mensaje");
         }
 
-        var autor = usuarioRepository.findById(datos.idUsuario()).get();
-        var curso = cursoRepository.findById(datos.idCurso()).get();
         var topico = new Topico(datos);
         topico.setAutor(autor);
         topico.setCurso(curso);
@@ -72,7 +69,7 @@ public class TopicoServiceImpl implements TopicoService {
         if (!optionalTopico.isPresent()) {
             throw new ValidacionException("Tópico no encontrado");
         }
-        Topico topico = optionalTopico.get();
+        var topico = optionalTopico.get();
 
         if (datos.titulo() != null) {
             if (datos.titulo().isBlank()) {
@@ -89,7 +86,7 @@ public class TopicoServiceImpl implements TopicoService {
         }
 
         if (datos.idCurso() != null) {
-            // En este caso decidi utilizar orElseThrow() para obtener el curso
+            // En este caso decidi utilizar orElseThrow() para obtener el curso porque es mucho más cómodo para flujos secundarios
             Curso curso = cursoRepository.findById(datos.idCurso())
                     .orElseThrow(() -> new ValidacionException("Curso no encontrado"));
             topico.setCurso(curso);
@@ -110,12 +107,10 @@ public class TopicoServiceImpl implements TopicoService {
     }
 
     @Override
-    public DatosDetalleTopico DetallarTopico(Long id) {
-        Optional<Topico> topico = topicoRepository.findById(id);
-        if (!topico.isPresent()){
-            throw new ValidacionException("Topico no encontrado con id: "+id);
-        }
-        return new DatosDetalleTopico(topico.get());
+    public DatosDetalleTopico detallarTopico(Long id) {
+       var topico = topicoRepository.findById(id)
+               .orElseThrow(() -> new ValidacionException("Topico no encontrado con id: "+id));
+        return new DatosDetalleTopico(topico);
     }
 
 }

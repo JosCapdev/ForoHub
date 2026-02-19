@@ -36,7 +36,7 @@ public class CursoServiceImpl implements CursoService {
     @Transactional
     @Override
     public Curso actualizarCurso(Long id, DatosActualizarCurso datos) {
-        Curso curso = cursoRepository.findById(id)
+        var curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ValidacionException("Curso no encontrado"));
 
         if (datos.nombre() == null || datos.nombre().isBlank()) {

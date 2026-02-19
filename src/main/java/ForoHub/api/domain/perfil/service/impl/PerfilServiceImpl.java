@@ -22,7 +22,7 @@ public class PerfilServiceImpl implements PerfilService {
     @Transactional
     @Override
     public DatosDetallePerfil registrarPerfil(DatosRegistroPerfil datos) {
-        Perfil perfil = new Perfil(datos);
+        var perfil = new Perfil(datos);
         perfilRepository.save(perfil);
         return new DatosDetallePerfil(perfil);
     }
@@ -36,7 +36,7 @@ public class PerfilServiceImpl implements PerfilService {
     @Transactional
     @Override
     public Perfil actualizarPerfil(Long id, DatosActualizarPerfil datos) {
-        Perfil perfil = perfilRepository.findById(id)
+        var perfil = perfilRepository.findById(id)
                 .orElseThrow(() -> new ValidacionException("Perfil no encontrado"));
         if (datos.nombre().isBlank()){
             throw new ValidacionException("El nombre no puede estar vacio");
@@ -55,14 +55,11 @@ public class PerfilServiceImpl implements PerfilService {
         }else{
             throw new ValidacionException("Perfil no encontrado");
         }
-        Perfil perfil = perfilRepository.findById(id)
-                .orElseThrow(() -> new ValidacionException("Perfil no encontrado"));
-        perfilRepository.deleteById(id);
     }
 
     @Override
     public DatosDetallePerfil detallarPerfil(Long id) {
-        Perfil perfil = perfilRepository.findById(id)
+        var perfil = perfilRepository.findById(id)
                 .orElseThrow(() -> new ValidacionException("Perfil no encontrado"));
         return new DatosDetallePerfil(perfil);
     }

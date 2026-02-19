@@ -50,7 +50,7 @@ public class RespuestaServiceImpl implements RespuestaService {
         if (respuestaRepository.existsById(id)){
             respuestaRepository.deleteById(id);
         }else{
-            throw new ValidacionException("Respuesta no encontrado");
+            throw new ValidacionException("Respuesta no encontrada");
         }
     }
 

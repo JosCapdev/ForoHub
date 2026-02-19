@@ -48,7 +48,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     @Override
     public Usuario actualizarUsuario(Long id, DatosActualizarUsuario datos) {
-        Usuario usuario = usuarioRepository.findById(id)
+        var usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ValidacionException("Usuario no encontrado"));
 
         if (datos.nombre().isBlank()){
@@ -74,7 +74,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     @Override
     public void eliminarUsuario(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
+        var usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ValidacionException("Usuario no encontrado"));
 
         usuario.setActivo(false);
@@ -83,7 +83,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public DatosDetalleUsuario detallarUsuario(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
+        var usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ValidacionException("Usuario no encontrado"));
 
         return new DatosDetalleUsuario(usuario);
