@@ -36,7 +36,7 @@ public class UsuarioController {
         return ResponseEntity.created(uri).body(detalleUsuario);
     }
     @GetMapping
-    public ResponseEntity<Page<DatosListaUsuario>> listarUsuarios(@PageableDefault(size = 10,sort = {"fechaCreacion"}, direction = Sort.Direction.ASC) Pageable paginacion){
+    public ResponseEntity<Page<DatosListaUsuario>> listarUsuarios(@PageableDefault(size = 10) Pageable paginacion){
         var page = service.listarUsuarios(paginacion);
 
         return ResponseEntity.ok(page);
