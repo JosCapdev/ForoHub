@@ -6,6 +6,7 @@ import ForoHub.api.domain.respuesta.dto.DatosRegistroRespuesta;
 import ForoHub.api.domain.respuesta.model.Respuesta;
 import ForoHub.api.domain.respuesta.repository.RespuestaRepository;
 import ForoHub.api.domain.respuesta.service.RespuestaService;
+import ForoHub.api.domain.topico.StatusTopico;
 import ForoHub.api.domain.topico.repository.TopicoRepository;
 import ForoHub.api.domain.usuario.repository.UsuarioRepository;
 import ForoHub.api.infra.exceptions.ValidacionException;
@@ -25,14 +26,12 @@ public class RespuestaServiceImpl implements RespuestaService {
 
     @Override
     public DatosDetalleRespuesta registrarRespuesta(DatosRegistroRespuesta datos) {
-        if (!usuarioRepository.existsById(datos.idUsuario())){
-            throw new ValidacionException("No existe un usuario con el id: "+datos.idUsuario());
-        }
-        if (!topicoRepository.existsById(datos.idTopico())){
-            throw new ValidacionException("No existe un topico con el id: "+datos.idTopico());
-        }
-        var autor = usuarioRepository.findById(datos.idUsuario()).get();
-        var topico = topicoRepository.findById(datos.idTopico()).get();
+        var autor = usuarioRepository.findByIdAndActivoTrue(datos.idUsuario())
+                .orElseThrow(() -> new ValidacionException("No existe un usuario activo con el id: " + datos.idUsuario()));
+
+        var topico = topicoRepository.findByIdAndStatusNot(datos.idTopico(), StatusTopico.CERRADO)
+                .orElseThrow(() -> new ValidacionException("No existe un tópico activo con el id: " + datos.idTopico()));
+
         var respuesta = new Respuesta(datos);
         respuesta.setAutor(autor);
         respuesta.setTopico(topico);
@@ -42,7 +41,7 @@ public class RespuestaServiceImpl implements RespuestaService {
 
     @Override
     public Page<DatosListaRespuesta> listarRespuestaPorTopico(Long idTopico,Pageable paginacion) {
-        return respuestaRepository.findAllByTopicoId(idTopico,paginacion).map(DatosListaRespuesta::new);
+        return respuestaRepository.findAllByTopicoIdAndTopicoStatusNot(idTopico, StatusTopico.CERRADO, paginacion).map(DatosListaRespuesta::new);
     }
 
     @Override

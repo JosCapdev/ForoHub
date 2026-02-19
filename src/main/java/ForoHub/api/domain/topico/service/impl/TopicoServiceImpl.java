@@ -2,6 +2,7 @@ package ForoHub.api.domain.topico.service.impl;
 
 import ForoHub.api.domain.curso.model.Curso;
 import ForoHub.api.domain.curso.repository.CursoRepository;
+import ForoHub.api.domain.topico.StatusTopico;
 import ForoHub.api.domain.topico.dto.DatosActualizarTopico;
 import ForoHub.api.domain.topico.dto.DatosListaTopico;
 import ForoHub.api.domain.topico.dto.DatosRegistroTopico;
@@ -32,10 +33,10 @@ public class TopicoServiceImpl implements TopicoService {
     @Transactional
     @Override
     public DatosDetalleTopico registrarTopico(DatosRegistroTopico datos) {
-        var autor = usuarioRepository.findById(datos.idUsuario())
+        var autor = usuarioRepository.findByIdAndActivoTrue(datos.idUsuario())
                 .orElseThrow(() -> new ValidacionException("No existe un usuario con el id: " + datos.idUsuario()));
 
-        var curso = cursoRepository.findById(datos.idCurso())
+        var curso = cursoRepository.findByIdAndActivoTrue(datos.idCurso())
                 .orElseThrow(() -> new ValidacionException("No existe un curso con el id: " + datos.idCurso()));
 
         if (topicoRepository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
@@ -51,23 +52,26 @@ public class TopicoServiceImpl implements TopicoService {
 
     @Override
     public Page<DatosListaTopico> listarTopicos(Pageable paginacion) {
-        return topicoRepository.findAll(paginacion).map(DatosListaTopico::new);
+        return topicoRepository.findByStatusNot(StatusTopico.CERRADO, paginacion)
+                .map(DatosListaTopico::new);
     }
+
 
     @Override
     public Page<DatosListaTopico> buscarTopicoPorCursoYAnio(String nombreCurso, int anio, Pageable paginacion) {
-        return topicoRepository.findByCursoNombreAndFechaCreacionYear(
-                nombreCurso, anio, paginacion)
+        return topicoRepository.findByCursoNombreAndFechaCreacionYearAndStatusNot(
+                        nombreCurso, anio, StatusTopico.CERRADO, paginacion)
                 .map(DatosListaTopico::new);
     }
+
 
     @Transactional
     @Override
     public Topico actualizarTopico(Long id, DatosActualizarTopico datos) {
         // Verificando con el método sugerido en el trello, isPresent() de la clase Java llamada Optional
-        Optional<Topico> optionalTopico = topicoRepository.findById(id);
+        Optional<Topico> optionalTopico = topicoRepository.findByIdAndStatusNot(id,StatusTopico.CERRADO);
         if (!optionalTopico.isPresent()) {
-            throw new ValidacionException("Tópico no encontrado");
+            throw new ValidacionException("Tópico no encontrado o cerrado");
         }
         var topico = optionalTopico.get();
 
@@ -87,7 +91,7 @@ public class TopicoServiceImpl implements TopicoService {
 
         if (datos.idCurso() != null) {
             // En este caso decidi utilizar orElseThrow() para obtener el curso porque es mucho más cómodo para flujos secundarios
-            Curso curso = cursoRepository.findById(datos.idCurso())
+            Curso curso = cursoRepository.findByIdAndActivoTrue(datos.idCurso())
                     .orElseThrow(() -> new ValidacionException("Curso no encontrado"));
             topico.setCurso(curso);
         }
@@ -99,16 +103,14 @@ public class TopicoServiceImpl implements TopicoService {
     @Transactional
     @Override
     public void eliminarTopico(Long id) {
-        if (topicoRepository.existsById(id)){
-            topicoRepository.deleteById(id);
-        }else {
-            throw new ValidacionException("Tópico no encontrado");
-        }
+        var topico = topicoRepository.findByIdAndStatusNot(id,StatusTopico.CERRADO)
+                .orElseThrow(() -> new ValidacionException("Topico no encontrado o cerrado"));
+        topico.setStatus(StatusTopico.CERRADO);
     }
 
     @Override
     public DatosDetalleTopico detallarTopico(Long id) {
-       var topico = topicoRepository.findById(id)
+       var topico = topicoRepository.findByIdAndStatusNot(id,StatusTopico.CERRADO)
                .orElseThrow(() -> new ValidacionException("Topico no encontrado con id: "+id));
         return new DatosDetalleTopico(topico);
     }

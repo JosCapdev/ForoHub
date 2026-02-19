@@ -29,15 +29,15 @@ public class CursoServiceImpl implements CursoService {
 
     @Override
     public Page<DatosListaCurso> listarCursos(Pageable paginacion) {
-        return cursoRepository.findAll(paginacion)
+        return cursoRepository.findByActivoTrue(paginacion)
                 .map(DatosListaCurso::new);
     }
 
     @Transactional
     @Override
     public Curso actualizarCurso(Long id, DatosActualizarCurso datos) {
-        var curso = cursoRepository.findById(id)
-                .orElseThrow(() -> new ValidacionException("Curso no encontrado"));
+        var curso = cursoRepository.findByIdAndActivoTrue(id)
+                .orElseThrow(() -> new ValidacionException("Curso no encontrado o inactivo"));
 
         if (datos.nombre() == null || datos.nombre().isBlank()) {
             throw new ValidacionException("El nombre del curso no puede estar vacío");
@@ -55,17 +55,16 @@ public class CursoServiceImpl implements CursoService {
     @Transactional
     @Override
     public void eliminarCurso(Long id) {
-        if (cursoRepository.existsById(id)) {
-            cursoRepository.deleteById(id);
-        } else {
-            throw new ValidacionException("Curso no encontrado");
-        }
+        var curso = cursoRepository.findByIdAndActivoTrue(id)
+                .orElseThrow(() -> new ValidacionException("Curso no encontrado o inactivo"));
+        curso.setActivo(false);
+        cursoRepository.save(curso);
     }
 
     @Override
     public DatosDetalleCurso detallarCurso(Long id) {
-        var curso = cursoRepository.findById(id)
-                .orElseThrow(() -> new ValidacionException("Curso no encontrado"));
+        var curso = cursoRepository.findByIdAndActivoTrue(id)
+                .orElseThrow(() -> new ValidacionException("Curso no encontrado o inactivo"));
         return new DatosDetalleCurso(curso);
     }
 }
