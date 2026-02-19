@@ -34,7 +34,7 @@ public class PerfilController {
         return ResponseEntity.created(uri).body(detallePerfil);
     }
     @GetMapping
-    public ResponseEntity<Page<DatosListaPerfil>> listarPerfiles(@PageableDefault(size = 10,sort = {"fechaCreacion"}, direction = Sort.Direction.ASC) Pageable paginacion){
+    public ResponseEntity<Page<DatosListaPerfil>> listarPerfiles(@PageableDefault(size = 10,sort = {"nombre"}, direction = Sort.Direction.ASC) Pageable paginacion){
         var page = service.listarPerfiles(paginacion);
 
         return ResponseEntity.ok(page);
